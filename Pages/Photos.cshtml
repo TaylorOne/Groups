@@ -1,0 +1,70 @@
+﻿@page
+@model Groups.Pages.PhotosModel
+@{
+    ViewData["Title"] = "Photos";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div id="imgDisplay" class="col-lg-10 col-md-9 col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+        <button type="button" class="btn btn-outline-light mb-3 float-right" data-toggle="modal" data-target="#imageUploadModal">Upload photo</button>
+        @foreach (var item in Model.Group.Images)
+        {
+            <a href="@Model.AddFilePath(item.SafeFileName)" target="_blank"><img src="@Model.AddFilePath(item.SafeFileName)" class="img-thumbnail mr-3 mb-3" alt="@item.UntrustedFileName" /></a>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="imageUploadModal" tabindex="-1" role="dialog" aria-labelledby="imageUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="imgUp" action="files" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <label for="image" class="modal-title" id="imageUploadModalLabel">Upload a photo</label>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="file" type="file" name="file" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

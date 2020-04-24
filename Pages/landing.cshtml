@@ -1,0 +1,91 @@
+﻿@page
+@using Groups.Data
+@model Groups.Pages.LandingModel
+@{
+    ViewData["Title"] = "Landing";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold active">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-9 col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+
+        @if (Model.UserInGroup)
+        {
+            <form id="createPost" action="Landing" method="post">
+                <div class="input-group mb-3">
+                    <label for="writePost"></label>
+                    <input class="form-control" id="writePost" name="content" placeholder="Write something..." aria-label="post" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-light" type="submit">Post</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else if (Model.UserWantsToJoin)
+        {
+            <p>You've asked to join, waiting for approval!</p>
+        }
+        else
+        {
+            <button type="button" class="btn btn-outline-light btn-sm mb-3" style="width: 100%" onclick="JoinGroupLanding(@Model.Group.GroupId)">Join</button>
+        }
+
+        @if (Model.Group.PrivacyType == Privacy.Public || (Model.Group.PrivacyType == Privacy.Private && Model.UserInGroup))
+        {
+            <div id="posts">
+                @if (Model.Posts.Count > 0)
+                {
+                    @foreach (var item in Model.Posts)
+                    {
+                        <div class="card mb-3" style="width: 100%;">
+                            <div class="card-body">
+                                <h6 class="card-title">@item.User.FullName</h6>
+                                <p class="card-text">@item.Content</p>
+                            </div>
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    <p>There are no posts yet!</p>
+                }
+            </div>
+        } else
+        {
+            <p>This is a private group, join to write and view posts!</p>
+        }
+
+    </div>
+</div>
+

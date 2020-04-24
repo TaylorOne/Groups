@@ -1,0 +1,148 @@
+﻿@page
+@model Groups.Pages.EventsModel
+@{
+    ViewData["Title"] = "events";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div id="events" class="col-lg-10 col-md-9 col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+        <button type="button" class="btn btn-outline-light btn-sm mb-3" data-toggle="modal" data-target="#addEventModal">Add an event</button>
+        @if (Model.Group.Events.Count == 0)
+        {
+            <p>There are no events yet.</p>
+        }
+        else
+        {
+            @foreach (var item in Model.Group.Events)
+            {
+                <div class="card mb-2">
+                    <div class="card-body row" style="padding: 0.75rem">
+                        <div class="col-2 border-right" style="text-align: center">
+                            <b>@Model.GetMonthName(item.Start.Date.Month)</b>
+                            <h2>@item.Start.Date.Day</h2>
+                        </div>
+                        <div class="col-10">
+                            <h5 class="card-title">@item.Name</h5>
+                            <hr />
+                            <div class="card-text">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <p>@item.Description<br /></p>
+                                        Location: @item.Location
+                                    </div>
+                                    <div class="col-5">
+                                        <p>
+                                            Start: @Model.GetTime(item.Start)<br />
+                                            End: @Model.GetTime(item.End)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="addEvent" action="events" method="post">
+                <div class="form-group">
+                    <div class="modal-header">
+                        Add an event
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Event name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                            <div id="nameFieldError">
+                                Please enter an event name
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <textarea class="form-control" id="location" name="location" rows="2"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-3">
+                                <label for="dateStart">Start</label>
+                            </div>
+                            <div class="form-group col-5">
+                                <input type="date" class="form-control" id="dateStart" name="dateStart" value="@Model.dateToday">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="time" class="form-control" id="timeStart" name="timeStart" value="12:00">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-3">
+                                <label for="dateEnd">End</label>
+                            </div>
+                            <div class="form-group col-5">
+                                <input type="date" class="form-control" id="dateEnd" name="dateEnd" value="@Model.dateToday">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="time" class="form-control" id="timeEnd" name="timeEnd" value="15:00">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-3">
+                            </div>
+                            <div class="form-group col-9">
+                                <div id="dateFieldError">
+                                    Make sure your event ends after it begins.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

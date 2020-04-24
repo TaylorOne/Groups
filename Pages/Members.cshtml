@@ -1,0 +1,90 @@
+﻿@page
+@model Groups.Pages.MembersModel
+@{
+    ViewData["Title"] = "members";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-10 col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+
+        @if (Model.Group.PrivacyType == Privacy.Public || (Model.Group.PrivacyType == Privacy.Private && Model.UserInGroup))
+        {
+            @if (Model.PotentialMembers.Count != 0 && Model.UserIsAdmin == true)
+            {
+                <ul id="potentialMembers" class="list-group">
+                    <p>Users who want to join</p>
+                    @foreach (var item in Model.PotentialMembers)
+                    {
+                        var id = @item.Id.ToString().Substring(14, 9);
+
+                        <li id="@id" class="list-group-item d-flex justify-content-between align-items-center">
+                            <h6 class="card-title">@item.FullName</h6>
+                            <button type="button" class="btn btn-primary" onclick="AcceptUser('@item.FullName','@id','@Html.DisplayFor(model => model.Group.GroupId)')">Accept</button>
+                        </li>
+                        /*
+                        <div id="@item." class="card mb-3" style="width: 100%;">
+                            <div class="card-body">
+                                <h6 class="card-title">@item.FullName</h6>
+                                <p class="card-text">This user wants to join the group.</p>
+                                <a onclick="AcceptNewMember()">Accept</a>
+                            </div>
+                        </div>
+                        */
+
+                    }
+                </ul>
+                <br />
+                <br />
+            }
+            @if(Model.Members != null)
+            {
+                <ul id="members" class="list-group">
+                    @foreach (var item in Model.Members)
+                    {
+                        <li class="list-group-item">
+                            <h6 class="card-title">@item.FullName</h6>
+                        </li>
+                    }
+                </ul>
+
+            }
+        } else
+        {
+            <p>This is a private group, join to view membership!</p>
+        }
+
+    </div>
+</div>
+

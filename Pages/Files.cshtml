@@ -1,0 +1,108 @@
+﻿@page
+@model Groups.Pages.FilesModel
+@{
+    ViewData["Title"] = "Files";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-9 col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+        <button type="button" class="btn btn-outline-light mb-3 float-right" data-toggle="modal" data-target="#fileUploadModal">Upload file</button>
+
+        @if (Model.Files.Count == 0)
+        {
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>No files yet!</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Modified</th>
+                    </tr>
+                </thead>
+                <tbody id="files" >
+                    @foreach (var item in Model.Files)
+                    {
+                        <tr>
+                            <td>@item.UntrustedFileName</td>
+                            <td>@item.UntrustedFileName.Substring(item.UntrustedFileName.IndexOf('.') + 1).ToUpper()</td>
+                            <td>@item.DateAdded</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="fileUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="fileUp" action="files" method="post" enctype="multipart/form-data" >
+                <div class="modal-header">
+                    <label for="file" class="modal-title" id="fileUploadModalLabel">Upload a file</label>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="file" type="file" name="file" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

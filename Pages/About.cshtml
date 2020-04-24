@@ -1,0 +1,76 @@
+﻿@page
+@model Groups.Pages.AboutModel
+@{
+    ViewData["Title"] = "About";
+}
+
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-12 mt-2">
+        <h5 style="color: white" class="mt-2">@Html.DisplayFor(model => model.Group.Name)</h5>
+        <p id="privacy">&#187; @Html.DisplayFor(model => model.Group.PrivacyType)</p>
+        <ul class="nav mt-5 mb-3">
+            <li class="nav-item">
+                <a asp-page="about" asp-route-id="@Model.Group.GroupId" class="nav-link font-weight-bold">About</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="landing" asp-route-id="@Model.Group.GroupId" class="nav-link">Discussions</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="members" asp-route-id="@Model.Group.GroupId" class="nav-link">Members</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="events" asp-route-id="@Model.Group.GroupId" class="nav-link">Events</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="photos" asp-route-id="@Model.Group.GroupId" class="nav-link">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a asp-page="files" asp-route-id="@Model.Group.GroupId" class="nav-link">Files</a>
+            </li>
+            @if (Model.UserIsAdmin)
+            {
+                <li class="nav-item">
+                    <a asp-page="edit" asp-route-id="@Model.Group.GroupId" class="nav-link">Edit Group</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-9  col-sm-12 mb-3">
+        <img src=@Model.AddFilePath(Model.Group.BannerImg.SafeFileName) id="banner" class="img-fluid mb-4 border border-top-0 rounded-bottom" />
+        <div>
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-body">
+                    <h6 class="card-title">Description</h6>
+                    <p class="card-text">
+                        @if (Model.Group.Description == null)
+                        {
+                        <p>There's no description for this group yet.</p>
+                    }
+                    else
+                    {
+                        @Model.Group.Description
+                        <br /><br />
+                    }
+                    @Model.Group.PrivacyType<br />
+                    @if (Model.Group.PrivacyType == Privacy.Public)
+                    {
+                        <span class="text-muted">Anyone can see who's in the group and what they post</span><br /><br />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Only members can see who's in the group and what they post</span><br /><br />
+                    }
+
+                    Visible<br />
+                    <span class="text-muted">Anyone can find this group</span><br /><br />
+                    Date created:
+                    @Model.Group.Created.ToShortDateString()<br /><br />
+                    Location:
+                    @Model.Group.CityState
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,23 @@
+﻿@page
+@model Groups.Pages.testModel
+@{
+    ViewData["Title"] = "test";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<br />
+<h4>Make changes to your group</h4>
+<br />
+<form id="fUp" enctype="multipart/form-data" method="post">
+    <div class="form-group">
+        <label for="word" class="control-label"></label>
+        <input id="word" class="form-control" name="word">
+        <input type="file" id="file" name="file"/>
+        <span class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary" />
+    </div>
+    <div id="this">HEllllllloooooO!</div>
+</form>
+

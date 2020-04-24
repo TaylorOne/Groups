@@ -1,0 +1,91 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using Groups.Areas.Identity.Data;
+@model IndexModel
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="row">
+        <div class="col-md-2 col-sm-12">
+            <p class="mt-4 text-white">Groups You're In</p>
+            @foreach (var item in Model.Groups)
+            {
+                <a asp-page="Landing" asp-route-id="@item.GroupId">@item.Name</a><br />
+            }
+            <hr /><br /><br />
+            <a asp-page="Create" class="btn btn-outline-light">Create Group</a>
+        </div>
+        <div class="col-md-10 col-sm-12 mb-3">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Explore</h5>
+                    <div class="row">
+                        @if (Model.NewGroups != null)
+                        {
+                            @foreach (var item in Model.NewGroups)
+                            {
+                                <div class="col">
+                                    <div class="card" style="height: 100%; min-width: 140px; min-height: 400px">
+                                        <img class="card-img-top" style="min-height: 120px; object-fit: cover" src="@Model.AddFilePath(item.BannerImg.SafeFileName)" alt="Card image cap">
+                                        <div class="card-body" style="height: 100%">
+                                            <a asp-page="landing" asp-route-id="@item.GroupId"><h6 class="card-title">@item.Name</h6></a>
+                                            @if (@Model.GroupsUserWantsToJoin.Contains(item))
+                                            {
+                                                <p>Waiting for membership approval</p>
+                                            }
+                                        </div>
+                                        <div class="card-footer" id="@item.GroupId">
+                                            @if (@Model.GroupsUserWantsToJoin.Contains(item))
+                                            {
+                                                <p style="margin-bottom: 0">joined</p>
+                                            }
+                                            else
+                                            {
+                                                <a class="join" onmouseover="HighlightJoinButton(@item.GroupId)" onmouseout="UnHighlightJoinButton(@item.GroupId)" onclick="JoinGroup(@item.GroupId)">Join</a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col">
+                                <div class="card" style="height: 100%">
+                                    <div class="card-body">
+                                        <h6 class="card-title">No Groups yet</h6>
+                                        <p>1K members * 3 posts a month</p>
+                                        <button type="button" class="btn btn-outline-secondary mt-4 mb-5" style="width: 100%">Join</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="jumbotron mt-4">
+        <h1 class="display-4">Welcome to Groups!</h1>
+        <p class="lead">It's Facebook Groups without Facebook</p>
+        <br /><br /><br /><br />
+    </div>
+    <!--
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>You're not signed in, you suck.<br /></p>
+    </div>
+    -->
+}
+
